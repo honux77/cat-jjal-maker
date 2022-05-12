@@ -33,31 +33,41 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script type="text/babel">
       console.log("야옹");
-      const catItem = (
+
+      const Title = (props) => {
+        return <h1>{props.children}</h1>;
+      }
+      const CatItem = (props) =>{
+        return (
         <li>
-          <img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
+          <img src = {props.img} />
         </li>
       );
+      } 
 
-      const favorites =  (
+      const Favorites =  (props) => {
+        return (
         <ul>
-          {catItem}
-          {catItem}
+          <CatItem img = "https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
+          <CatItem img = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
         </ul>
-      );
+        );
+      }
 
-      const title = <h1>1번째 고양이 가라사대</h1>;
-      const form = (
+      const Form = (props) => {
+        return (
         <form>
           <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
           <button type="submit">생성</button>
         </form>
-      );
+        );
+      }
+
       const main = (
-        <div>
-          {title}
-          {form}
-          {favorites}
+        <div class='main-app'>
+          <Title>고양이 가라사대... </Title>
+          <Form/>
+          <Favorites/>
         </div>
       );
       const app = document.querySelector('#app');
