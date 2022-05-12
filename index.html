@@ -34,35 +34,29 @@
     <script type="text/babel">
       console.log("야옹");
 
-      const Title = (props) => {
-        return <h1>{props.children}</h1>;
-      }
-      const CatItem = (props) =>{
-        return (
+      const Title = ({children}) => (<h1>{children}</h1>);
+      
+      const CatItem = ({img}) =>(        
         <li>
-          <img src = {props.img} />
+          <img src = {img} />
         </li>
       );
-      } 
 
-      const Favorites =  (props) => {
-        return (
+      const Favorites =  (props) => (
+        
         <ul>
           <CatItem img = "https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
           <CatItem img = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
         </ul>
-        );
-      }
+      );   
 
-      const Form = (props) => {
-        return (
+      const Form = (props) => (
         <form>
           <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
           <button type="submit">생성</button>
         </form>
-        );
-      }
-
+      );
+    
       const main = (
         <div class='main-app'>
           <Title>고양이 가라사대... </Title>
@@ -70,7 +64,9 @@
           <Favorites/>
         </div>
       );
+
       const app = document.querySelector('#app');
+      
       ReactDOM.render(main, app);
   </script>
   </body>
