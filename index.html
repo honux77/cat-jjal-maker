@@ -38,8 +38,30 @@
           <img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
         </li>
       );
-      const drawHere = document.querySelector('#app');
-      ReactDOM.render(catItem, drawHere);
+
+      const favorites =  (
+        <ul>
+          {catItem}
+          {catItem}
+        </ul>
+      );
+
+      const title = <h1>1번째 고양이 가라사대</h1>;
+      const form = (
+        <form>
+          <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+          <button type="submit">생성</button>
+        </form>
+      );
+      const main = (
+        <div>
+          {title}
+          {form}
+          {favorites}
+        </div>
+      );
+      const app = document.querySelector('#app');
+      ReactDOM.render(main, app);
   </script>
   </body>
 </html>
