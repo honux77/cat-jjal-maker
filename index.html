@@ -65,29 +65,37 @@
       );   
 
       const Form = (props) => {
-        const handleSubmt = (event) => {
-          event.preventDefault();
-          console.log("폼 전송 클릭");
-        }
+        const countState = React.useState(1);
+        const [counter, setCounter] = countState;
+
         return (
-        <form onSubmit={handleSubmt}>
+        <form onSubmit={props.handleSubmit}>
           <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
           <button type="submit">생성</button>
         </form>
         );
       };
     
-      const app = (
-        <div className='main-app'>
-          <Title>고양이 가라사대... </Title>
+      const App = () => {
+        const [counter, setCounter ] = React.useState(1);
+        const handleSubmit = (event) => {
+          event.preventDefault();
+          setCounter(counter + 1);
+          console.log("폼 전송 클릭", counter);          
+        };      
+
+        return (
+          <div className='main-app'>
+          <Title>{counter} 번째 고양이 가라사대... </Title>
           <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
-          <Form/>
+          <Form handleSubmit = {handleSubmit}/>
           <Favorites/>
         </div>
-      );
+        );
+      }        
 
       const here = document.querySelector('#app');
-      ReactDOM.render(app, here);
+      ReactDOM.render(<App/>, here);
   </script>
   </body>
 </html>
