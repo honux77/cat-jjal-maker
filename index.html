@@ -42,9 +42,20 @@
         </li>
       );
 
+      const MainCard = ({img}) => (
+        <div className="main-card">
+        <img
+          src={img}
+          alt="고양이"
+          width="400"
+        />
+        <button>🤍</button>
+        </div>
+      );
+
       const Favorites =  (props) => (
         
-        <ul>
+        <ul className="favorites">
           <CatItem img = "https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
           <CatItem img = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
         </ul>
@@ -57,17 +68,18 @@
         </form>
       );
     
-      const main = (
+      const app = (
         <div class='main-app'>
           <Title>고양이 가라사대... </Title>
+          <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
           <Form/>
           <Favorites/>
         </div>
       );
 
-      const app = document.querySelector('#app');
+      const here = document.querySelector('#app');
       
-      ReactDOM.render(main, app);
+      ReactDOM.render(app, here);
   </script>
   </body>
 </html>
