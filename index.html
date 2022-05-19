@@ -22,9 +22,6 @@
       flex-wrap: wrap;
       gap: 15px;
     }
-    .favorites img {
-      width: 150px;
-    }
   </style>
   <body>
     <div id="app"></div>
@@ -33,35 +30,53 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script type="text/babel">
       console.log("야옹");
-      const catItem = (
+
+      const Title = ({children}) => (<h1>{children}</h1>);
+      
+      const CatItem = ({img}) =>(        
         <li>
-          <img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
+          <img src = {img} style={{ width: "200px", border: "1px solid red" }} />
         </li>
       );
 
-      const favorites =  (
-        <ul>
-          {catItem}
-          {catItem}
-        </ul>
+      const MainCard = ({img}) => (
+        <div className="main-card">
+        <img
+          src={img}
+          alt="고양이"
+          width="400"
+        />
+        <button>🤍</button>
+        </div>
       );
 
-      const title = <h1>1번째 고양이 가라사대</h1>;
-      const form = (
+      const Favorites =  (props) => (
+        
+        <ul className="favorites">
+          <CatItem img = "https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
+          <CatItem img = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
+        </ul>
+      );   
+
+      const Form = (props) => (
         <form>
           <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
           <button type="submit">생성</button>
         </form>
       );
-      const main = (
-        <div>
-          {title}
-          {form}
-          {favorites}
+    
+      const app = (
+        <div class='main-app'>
+          <Title>고양이 가라사대... </Title>
+          <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
+          <Form/>
+          <Favorites/>
         </div>
       );
-      const app = document.querySelector('#app');
-      ReactDOM.render(main, app);
+
+      const here = document.querySelector('#app');
+      
+      ReactDOM.render(app, here);
   </script>
   </body>
 </html>
