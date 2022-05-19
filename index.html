@@ -39,16 +39,22 @@
         </li>
       );
 
-      const MainCard = ({img}) => (
+      const MainCard = ({img}) => {
+        const handleHeartButton = () => {
+          console.log("하트 클릭");
+        }
+
+        return (
         <div className="main-card">
         <img
           src={img}
           alt="고양이"
           width="400"
         />
-        <button>🤍</button>
+        <button onClick = {handleHeartButton}>🤍</button>
         </div>
-      );
+        );
+      };
 
       const Favorites =  (props) => (
         
@@ -58,15 +64,21 @@
         </ul>
       );   
 
-      const Form = (props) => (
-        <form>
+      const Form = (props) => {
+        const handleSubmt = (event) => {
+          event.preventDefault();
+          console.log("폼 전송 클릭");
+        }
+        return (
+        <form onSubmit={handleSubmt}>
           <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
           <button type="submit">생성</button>
         </form>
-      );
+        );
+      };
     
       const app = (
-        <div class='main-app'>
+        <div className='main-app'>
           <Title>고양이 가라사대... </Title>
           <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
           <Form/>
@@ -75,7 +87,6 @@
       );
 
       const here = document.querySelector('#app');
-      
       ReactDOM.render(app, here);
   </script>
   </body>
