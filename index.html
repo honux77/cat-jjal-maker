@@ -56,13 +56,15 @@
         );
       };
 
-      const Favorites =  (props) => (
-        
+      const Favorites =  (props) => {        
+        const {catUrls} = props;
+        return (
         <ul className="favorites">
-          <CatItem img = "https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
-          <CatItem img = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
+          <CatItem img = {catUrls[1]}/>
+          <CatItem img = {catUrls[2]}/>
         </ul>
-      );   
+        );
+      };   
 
       const Form = (props) => {
         const countState = React.useState(1);
@@ -98,7 +100,7 @@
           <Title>{counter} 번째 고양이 가라사대... </Title>
           <MainCard img= {catUrls[catIdx]}/>
           <Form handleSubmit = {handleSubmit}/>
-          <Favorites/>
+          <Favorites catUrls = {catUrls}/>
         </div>
         );
       }        
