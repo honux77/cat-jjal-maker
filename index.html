@@ -39,44 +39,74 @@
         </li>
       );
 
-      const MainCard = ({img}) => (
+      const MainCard = ({img}) => {
+        const handleHeartButton = () => {
+          console.log("하트 클릭");
+        }
+
+        return (
         <div className="main-card">
         <img
           src={img}
           alt="고양이"
           width="400"
         />
-        <button>🤍</button>
+        <button onClick = {handleHeartButton}>🤍</button>
         </div>
-      );
+        );
+      };
 
-      const Favorites =  (props) => (
-        
+      const Favorites =  (props) => {        
+        const {catUrls} = props;
+        return (
         <ul className="favorites">
-          <CatItem img = "https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
-          <CatItem img = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
+          <CatItem img = {catUrls[1]}/>
+          <CatItem img = {catUrls[2]}/>
         </ul>
-      );   
+        );
+      };   
 
-      const Form = (props) => (
-        <form>
+      const Form = (props) => {
+        const countState = React.useState(1);
+        const [counter, setCounter] = countState;
+
+        return (
+        <form onSubmit={props.handleSubmit}>
           <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
           <button type="submit">생성</button>
         </form>
-      );
+        );
+      };
     
-      const app = (
-        <div class='main-app'>
-          <Title>고양이 가라사대... </Title>
-          <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
-          <Form/>
-          <Favorites/>
+      const App = () => {
+        const [counter, setCounter ] = React.useState(1);
+        const [catIdx, setMainCat ] = React.useState(0);
+
+        const catUrls = [
+          "https://cataas.com/cat/60b73094e04e18001194a309/says/react",
+          "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn",
+          "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript"
+        ];
+
+        const handleSubmit = (event) => {
+          event.preventDefault();
+          setCounter(counter + 1);
+          setMainCat((catIdx + 1) % 3);
+          console.log("폼 전송 클릭", counter);          
+        };      
+
+        return (
+          <div className='main-app'>
+          <Title>{counter} 번째 고양이 가라사대... </Title>
+          <MainCard img= {catUrls[catIdx]}/>
+          <Form handleSubmit = {handleSubmit}/>
+          <Favorites catUrls = {catUrls}/>
         </div>
-      );
+        );
+      }        
 
       const here = document.querySelector('#app');
-      
-      ReactDOM.render(app, here);
+      ReactDOM.render(<App/>, here);
   </script>
   </body>
 </html>
