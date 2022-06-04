@@ -60,8 +60,9 @@
         const {catUrls} = props;
         return (
         <ul className="favorites">
-          <CatItem img = {catUrls[1]}/>
-          <CatItem img = {catUrls[2]}/>
+          {catUrls.map(cat => (
+              <CatItem img={cat} key={cat.split("/")[4]} />
+            ))}          
         </ul>
         );
       };   
