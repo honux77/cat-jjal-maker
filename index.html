@@ -32,11 +32,12 @@
 
       const Title = ({children}) => (<h1>{children}</h1>);
 
-      const Reset = ({setCounter, setFavorites}) => {
+      const Reset = ({setCounter, setFavorites, setMessage}) => {
         const reset = () => {
           localStorage.clear();
           setCounter(1);
           setFavorites([]);          
+          setMessage(sayHi);
         }       
 
         return (
@@ -60,10 +61,9 @@
         <div className="main-card">
         <img
           src={img}
-          alt="고양이"
+          alt="랜덤하게 바뀌는 고양이 이미지"
           width="400"
-        />
-        <button onClick = {handleHeartButton}>🤍</button>
+        /> <button onClick = {handleHeartButton}>🤍</button> 
         </div>
         );
       };
@@ -79,7 +79,7 @@
         );
       };   
 
-      const Form = ({increaseCounter, updateMainCat}) => {   
+      const Form = ({increaseCounter, updateMessage, nextCat}) => {   
         const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
         const [errorMessage, setErrorMessage] = React.useState("");
 
@@ -104,10 +104,14 @@
             message.value = "";          
             return;
           }    
-          updateMainCat(message.value);          
+          updateMessage(message.value);  
+          increaseCounter();        
           message.value = "";          
-          increaseCounter();
         };      
+
+        const changeCat = (e)=> {
+          nextCat();
+        }
 
         return (
         <form onSubmit={handleFormSubmit}>
@@ -117,8 +121,8 @@
             name="name"
             placeholder="영어 대사를 입력해주세요"
             onChange={handleInputChange}
-          />
-          <button type="submit">메시지 변경</button>
+          /> <button type="submit">입력</button> 
+          <p> <button type="button" onClick={changeCat}>고양이 바꾸기</button> </p>
           <p style={{ color: "red" }}>{errorMessage}</p>
         </form>
         
@@ -128,7 +132,21 @@
       const cats = [
           "60b73094e04e18001194a309",
           "5e9970351b7a400011744233",  
-          "595f280b557291a9750ebf65"
+          "595f280b557291a9750ebf65",
+          "62849a8349d1d200178aebc1",
+          "5cf6c0c949d388001253397e",
+          "595f2809557291a9750ebf31",
+          "6120c8103a342d0013920e23",
+          "626f04697f254a0017b56539",
+          "5d39a47914ca600011538e4c",
+          "5d39a4af14ca600011538e8c",
+          "5d39a48314ca600011538e70",
+          "627e4aca0637ad001735469f",
+          "5f10b8b45bc3fa0010444499",
+          "62849af449d1d200178aebc5",
+          "5b55c2addf7368000f914b46",
+          "6010b5ca47d128001b7bbb77",
+          "595f280a557291a9750ebf4f",
         ];
 
       const sayHi = "Say Hi to Me!"
@@ -143,10 +161,10 @@
       };
 
       const App = () => {      
-        const [counter, setCounter]  = React.useState(jsonLocalStorage.getItem("counter") || 1);
-        const [mainCat, setMainCat] = React.useState(cats[0]);
+        const [counter, setCounter]  = React.useState(jsonLocalStorage.getItem("counter") || 1);        
+        const [mainCat, setMainCat] = React.useState(jsonLocalStorage.getItem("mainCat") || cats[0]);
+        const [message, setMessage] = React.useState(jsonLocalStorage.getItem("message") || sayHi);;
         const [favorites, setFavorites] =React.useState(jsonLocalStorage.getItem("favorites") || []);
-        const [message, setMessage] = React.useState(sayHi);
 
         const catUrl = (cat, msg) => ("https://cataas.com/cat/" + cat + "/says/" + msg);   
 
@@ -154,10 +172,10 @@
           setCounter(counter + 1);  
           jsonLocalStorage.setItem("counter", counter);
         }  
-
-        const updateMainCat = (msg) => {
-          setMainCat(cats[counter % cats.length]);   
-          setMessage(msg);
+        
+        const nextCat = () => {
+          setMainCat(cats[parseInt(Math.random() * cats.length)]);  
+          jsonLocalStorage.setItem("mainCat", mainCat);         
         } 
 
         const addFarovirtes = () => {
@@ -165,13 +183,18 @@
           jsonLocalStorage.setItem("favorites", favorites);
         }
 
+        const updateMessage = (msg) => {
+            setMessage(msg);
+            jsonLocalStorage.setItem("message", msg);
+        }
+
         return (
           <div className='main-app'>
           <Title>{counter} 번째 고양이 가라사대...</Title>
-          <Form increaseCounter={increaseCounter} updateMainCat={updateMainCat} />
+          <Form increaseCounter={increaseCounter} updateMessage={updateMessage} nextCat={nextCat} />
           <MainCard img={catUrl(mainCat, message)} addFarovirtes={addFarovirtes} />
           <Favorites catUrls = {favorites}/>
-          <Reset setCounter={setCounter} setFavorites={setFavorites} />
+          <Reset setCounter={setCounter} setFavorites={setFavorites} setMessage={setMessage} />
         </div>
         );
       }        
