@@ -117,20 +117,32 @@
 
       const favoriteCats = [];
 
+      const jsonLocalStorage = {
+        setItem: (key, value) => {
+          localStorage.setItem(key, JSON.stringify(value));
+        },
+        getItem: (key) => {
+          return JSON.parse(localStorage.getItem(key));
+        },
+      };
+
       const App = () => {      
-        const [counter, setCounter]  = React.useState(1);
+        const [counter, setCounter]  = React.useState(jsonLocalStorage.getItem("counter") || 0);
         const [mainCat, setMainCat] = React.useState(cats[0]);
-        const [favoriteCats, addFavoriteCat] =React.useState([]);
+        const [favoriteCats, addFavoriteCat] =React.useState(jsonLocalStorage.getItem("favorites") || []);
         const [message, setMessage] = React.useState(sayHi);
 
         const catUrl = (cat, msg) => ("https://cataas.com/cat/" + cat + "/says/" + msg);   
 
         const increaseCounter = () => {
           setCounter(counter + 1);  
+          jsonLocalStorage.setItem("counter", counter);
         }  
+
         const updateMainCat = () => {
           setMainCat(cats[counter % cats.length]);
           addFavoriteCat([...favoriteCats, catUrl(mainCat, message)]);
+          jsonLocalStorage.setItem("favorites", favoriteCats);
           setMessage(sayHi);
         } 
 
