@@ -65,37 +65,48 @@
       const Form = (props) => {        
         return (
         <form onSubmit={props.handleSubmit}>
-          <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
-          <button type="submit">생성</button>
+          <input id="catMessage" type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+          <button type="submit">메시지 변경</button>
         </form>
         );
       };
     
       const cats = [
-          "https://cataas.com/cat/60b73094e04e18001194a309",
-          "https://cataas.com//cat/5e9970351b7a400011744233",  
-          "https://cataas.com/cat/595f280b557291a9750ebf65"       
+          "60b73094e04e18001194a309",
+          "5e9970351b7a400011744233",  
+          "595f280b557291a9750ebf65"
         ];
+
+      const favoriteCats = [];
 
       const App = () => {      
         const [counter, setCounter]  = React.useState(1);
-        
+        const [mainCat, setMainCat] = React.useState(cats[0]);
+        const [favoriteCats, addFavoriteCat] =React.useState([]);
+        const [message, setMessage] = React.useState("Meow");
+
+        const catUrl = (cat, msg) => ("https://cataas.com/cat/" + cat + "/says/" + msg);        
+
         const handleHeartButton = () => {          
-          setCounter(counter + 1);          
-          cats.push(cats[counter % cats.length])
+          setCounter(counter + 1);  
+          setMainCat(cats[counter % cats.length]);
+          addFavoriteCat([...favoriteCats, catUrl(mainCat, message)]);
+          setMessage("Meow");
         }
 
         const handleSubmit = (event) => {
           event.preventDefault();
-          console.log("폼 전송 클릭");          
+          const catMessage = document.querySelector('#catMessage');
+          setMessage(catMessage.value);
+          catMessage.value = "";          
         };      
 
         return (
           <div className='main-app'>
           <Title>{counter} 번째 고양이 가라사대... </Title>
-          <MainCard img= {cats[counter % cats.length]} handleHeartButton={handleHeartButton}/>
+          <MainCard img= {catUrl(mainCat, message)} handleHeartButton={handleHeartButton}/>
           <Form handleSubmit = {handleSubmit}/>
-          <Favorites catUrls = {cats}/>
+          <Favorites catUrls = {favoriteCats}/>
         </div>
         );
       }        
