@@ -38,7 +38,12 @@
         </li>
       );
 
-      const MainCard = ({img, handleHeartButton}) => {
+      const MainCard = ({img, increaseCounter, updateMainCat}) => {
+        const handleHeartButton = (e) => {          
+          increaseCounter();
+          updateMainCat();
+        }
+
         return (
         <div className="main-card">
         <img
@@ -62,12 +67,43 @@
         );
       };   
 
-      const Form = (props) => {        
+      const Form = ({setMessage}) => {   
+        const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
+        const [errorMessage, setErrorMessage] = React.useState("");
+
+        const handleInputChange = (e) => {
+          const message = e.target.value;
+          setErrorMessage("");
+          if (includesHangul(message)) {
+            setErrorMessage("한글은 입력할 수 없습니다.");
+          }
+        };
+
+        const handleFormSubmit = (e) => {
+          e.preventDefault();          
+          const catMessage = document.querySelector('#catMessage');
+          console.log(catMessage.value);
+          if (catMessage.value === "") {
+            setErrorMessage("빈 값을 추가할 수 없습니다.");
+            return;
+          }          
+          setMessage(catMessage.value);
+          catMessage.value = "";          
+        };      
+
         return (
-        <form onSubmit={props.handleSubmit}>
-          <input id="catMessage" type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+        <form onSubmit={handleFormSubmit}>
+          <input 
+            id="catMessage"
+            type="text"
+            name="name"
+            placeholder="영어 대사를 입력해주세요"
+            onChange={handleInputChange}
+          />
           <button type="submit">메시지 변경</button>
+          <p style={{ color: "red" }}>{errorMessage}</p>
         </form>
+        
         );
       };
     
@@ -77,35 +113,32 @@
           "595f280b557291a9750ebf65"
         ];
 
+      const sayHi = "Say Hi to Me!"
+
       const favoriteCats = [];
 
       const App = () => {      
         const [counter, setCounter]  = React.useState(1);
         const [mainCat, setMainCat] = React.useState(cats[0]);
         const [favoriteCats, addFavoriteCat] =React.useState([]);
-        const [message, setMessage] = React.useState("Meow");
+        const [message, setMessage] = React.useState(sayHi);
 
-        const catUrl = (cat, msg) => ("https://cataas.com/cat/" + cat + "/says/" + msg);        
+        const catUrl = (cat, msg) => ("https://cataas.com/cat/" + cat + "/says/" + msg);   
 
-        const handleHeartButton = () => {          
+        const increaseCounter = () => {
           setCounter(counter + 1);  
+        }  
+        const updateMainCat = () => {
           setMainCat(cats[counter % cats.length]);
           addFavoriteCat([...favoriteCats, catUrl(mainCat, message)]);
-          setMessage("Meow");
-        }
-
-        const handleSubmit = (event) => {
-          event.preventDefault();
-          const catMessage = document.querySelector('#catMessage');
-          setMessage(catMessage.value);
-          catMessage.value = "";          
-        };      
+          setMessage(sayHi);
+        } 
 
         return (
           <div className='main-app'>
-          <Title>{counter} 번째 고양이 가라사대... </Title>
-          <MainCard img= {catUrl(mainCat, message)} handleHeartButton={handleHeartButton}/>
-          <Form handleSubmit = {handleSubmit}/>
+          <Title>{counter} 번째 고양이 가라사대...</Title>
+          <Form setMessage={setMessage} />
+          <MainCard img={catUrl(mainCat, message)} increaseCounter={increaseCounter} updateMainCat={updateMainCat} />
           <Favorites catUrls = {favoriteCats}/>
         </div>
         );
