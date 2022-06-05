@@ -31,6 +31,19 @@
     <script type="text/babel">
 
       const Title = ({children}) => (<h1>{children}</h1>);
+
+      const Reset = ({setCounter, setFavorites}) => {
+        const reset = () => {
+          localStorage.clear();
+          setCounter(1);
+          setFavorites([]);          
+        }       
+
+        return (
+          <div id="reset">
+          <button onClick = {reset}> 데이터 초기화하기</button>
+          </div>);
+      };
       
       const CatItem = ({img}) =>(        
         <li>
@@ -38,10 +51,9 @@
         </li>
       );
 
-      const MainCard = ({img, increaseCounter, updateMainCat}) => {
-        const handleHeartButton = (e) => {          
-          increaseCounter();
-          updateMainCat();
+      const MainCard = ({img, addFarovirtes}) => {
+        const handleHeartButton = (e) => {                    
+          addFarovirtes();
         }
 
         return (
@@ -67,7 +79,7 @@
         );
       };   
 
-      const Form = ({setMessage}) => {   
+      const Form = ({increaseCounter, updateMainCat}) => {   
         const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
         const [errorMessage, setErrorMessage] = React.useState("");
 
@@ -81,14 +93,20 @@
 
         const handleFormSubmit = (e) => {
           e.preventDefault();          
-          const catMessage = document.querySelector('#catMessage');
-          console.log(catMessage.value);
-          if (catMessage.value === "") {
+          const message = document.querySelector('#catMessage');
+          if (message.value === "") {
             setErrorMessage("빈 값을 추가할 수 없습니다.");
             return;
-          }          
-          setMessage(catMessage.value);
-          catMessage.value = "";          
+          }
+          
+          if (includesHangul(message.value)) {
+            setErrorMessage("한글은 입력할 수 없습니다.");
+            message.value = "";          
+            return;
+          }    
+          updateMainCat(message.value);          
+          message.value = "";          
+          increaseCounter();
         };      
 
         return (
@@ -115,8 +133,6 @@
 
       const sayHi = "Say Hi to Me!"
 
-      const favoriteCats = [];
-
       const jsonLocalStorage = {
         setItem: (key, value) => {
           localStorage.setItem(key, JSON.stringify(value));
@@ -127,9 +143,9 @@
       };
 
       const App = () => {      
-        const [counter, setCounter]  = React.useState(jsonLocalStorage.getItem("counter") || 0);
+        const [counter, setCounter]  = React.useState(jsonLocalStorage.getItem("counter") || 1);
         const [mainCat, setMainCat] = React.useState(cats[0]);
-        const [favoriteCats, addFavoriteCat] =React.useState(jsonLocalStorage.getItem("favorites") || []);
+        const [favorites, setFavorites] =React.useState(jsonLocalStorage.getItem("favorites") || []);
         const [message, setMessage] = React.useState(sayHi);
 
         const catUrl = (cat, msg) => ("https://cataas.com/cat/" + cat + "/says/" + msg);   
@@ -139,19 +155,23 @@
           jsonLocalStorage.setItem("counter", counter);
         }  
 
-        const updateMainCat = () => {
-          setMainCat(cats[counter % cats.length]);
-          addFavoriteCat([...favoriteCats, catUrl(mainCat, message)]);
-          jsonLocalStorage.setItem("favorites", favoriteCats);
-          setMessage(sayHi);
+        const updateMainCat = (msg) => {
+          setMainCat(cats[counter % cats.length]);   
+          setMessage(msg);
         } 
+
+        const addFarovirtes = () => {
+          setFavorites([...favorites, catUrl(mainCat, message)]);
+          jsonLocalStorage.setItem("favorites", favorites);
+        }
 
         return (
           <div className='main-app'>
           <Title>{counter} 번째 고양이 가라사대...</Title>
-          <Form setMessage={setMessage} />
-          <MainCard img={catUrl(mainCat, message)} increaseCounter={increaseCounter} updateMainCat={updateMainCat} />
-          <Favorites catUrls = {favoriteCats}/>
+          <Form increaseCounter={increaseCounter} updateMainCat={updateMainCat} />
+          <MainCard img={catUrl(mainCat, message)} addFarovirtes={addFarovirtes} />
+          <Favorites catUrls = {favorites}/>
+          <Reset setCounter={setCounter} setFavorites={setFavorites} />
         </div>
         );
       }        
