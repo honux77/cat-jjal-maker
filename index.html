@@ -170,29 +170,30 @@
     const catUrl = (cat, message) => (`https://cataas.com/cat/${cat}/says/${message}`);  
 
     const App = () => {                       
-      const [counter, setCounter] = React.useState(COUNT);
+
       const [mainCat, setMainCat] = React.useState(MAIN_CAT);
       const [message, setMessage] = React.useState(HELLO);
-      const [favorites, setFavorites] = React.useState(EMPTY);
-
-      React.useEffect(() => {        
-        console.log("Init App");
-        setCounter(jsonLocalStorage.getItem("counter") || COUNT);
-        setMainCat(jsonLocalStorage.getItem("mainCat") || MAIN_CAT);
-        setMessage(jsonLocalStorage.getItem("message") || HELLO);
-        setFavorites(jsonLocalStorage.getItem("favorites")|| EMPTY);        
-      }, []);
+      
+      const [counter, setCounter] = React.useState(()=>{
+        return jsonLocalStorage.getItem("counter") || COUNT;
+      });     
+      
+      const [favorites, setFavorites] = React.useState(()=>{        
+        return jsonLocalStorage.getItem("favorites") || EMPTY;
+      });      
 
       const nextCat = async (text) => {
         const catId = await fetchCat();
         setMainCat(catId);
-        jsonLocalStorage.setItem("mainCat", catId);        
-      }
+      };
 
       const increaseCounter = () => {
-        setCounter(counter + 1);        
-        jsonLocalStorage.setItem("counter", counter);
-      }      
+        setCounter((prev)=> {
+          const next = prev + 1;
+          jsonLocalStorage.setItem("counter", next);
+          return next;
+        });
+      };
 
       const addFarovirtes = () => {
         setFavorites([...favorites, catUrl(mainCat, message)]);
@@ -205,15 +206,11 @@
         jsonLocalStorage.setItem("message", msg);
       }
 
-      let title = "고양이 가라사대";
+      let titleCount = counter === 1 ? null : counter + "번째";
       
-      if (counter !== 1) {
-        title = counter + "번째 고양이 가라사대";
-      }
-
       return (
         <div className='main-app'>
-          <Title>{title}</Title>
+          <Title>{titleCount} 고양이 가라사대</Title>
           <Form updateMessage={updateMessage} nextCat={nextCat} />
           <MainCard img={catUrl(mainCat, message)} addFarovirtes={addFarovirtes} increaseCounter={increaseCounter}
             mainCat={mainCat} favorites={favorites} />
