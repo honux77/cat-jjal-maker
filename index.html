@@ -205,9 +205,15 @@
         jsonLocalStorage.setItem("message", msg);
       }
 
+      let title = "고양이 가라사대";
+      
+      if (counter !== 1) {
+        title = counter + "번째 고양이 가라사대";
+      }
+
       return (
         <div className='main-app'>
-          <Title>{counter} 번째 고양이 가라사대...</Title>
+          <Title>{title}</Title>
           <Form updateMessage={updateMessage} nextCat={nextCat} />
           <MainCard img={catUrl(mainCat, message)} addFarovirtes={addFarovirtes} increaseCounter={increaseCounter}
             mainCat={mainCat} favorites={favorites} />
