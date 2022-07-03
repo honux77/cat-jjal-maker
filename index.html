@@ -7,25 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>고양이 가라사대</title>
 </head>
-<style>
-  body {
-    text-align: center;
-  }
-
-  .main-card button {
-    position: relative;
-    left: -45px;
-    bottom: 15px;
-  }
-
-  .favorites {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-</style>
 
 <body>
   <div id="app"></div>
@@ -33,34 +14,17 @@
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   <script type="text/babel">
-    
+
     const OPEN_API_DOMAIN = "https://cataas.com";
     const COUNT = 1;
     const HELLO = "Hello, React Cat!";
     const MAIN_CAT = "60b73094e04e18001194a309";
-    const EMPTY = [];       
-    
+    const EMPTY = [];
+
     const fetchCat = async () => {
       const response = await fetch(`${OPEN_API_DOMAIN}/cat?json=true`);
       const responseJson = await response.json();
       return responseJson.url.split("/")[2];
-    };
-
-    const Title = ({ children }) => (<h1>{children}</h1>);
-
-    const Reset = ({ setCounter, setFavorites, setMessage, setMainCat }) => {
-      const reset = () => {
-        localStorage.clear();
-        setCounter(COUNT);
-        setFavorites(EMPTY);
-        setMainCat(MAIN_CAT)
-        setMessage(HELLO);
-      }
-
-      return (
-        <div id="reset">
-          <button onClick={reset}> 데이터 초기화하기</button>
-        </div>);
     };
 
     const CatItem = ({ img }) => (
@@ -69,16 +33,16 @@
       </li>
     );
 
-    const MainCard = ({img, addFarovirtes, increaseCounter, mainCat, favorites}) => {
-      
+    const MainCard = ({ img, addFarovirtes, increaseCounter, mainCat, favorites }) => {
+
       const handleHeartButton = (e) => {
         increaseCounter();
-        addFarovirtes();        
+        addFarovirtes();
       }
-      
-      let includeFavorite = false;      
+
+      let includeFavorite = false;
       favorites.forEach(f => {
-          if (f.includes(mainCat)) includeFavorite = true;
+        if (f.includes(mainCat)) includeFavorite = true;
       });
 
       const heart = includeFavorite ? "💖" : "🤍";
@@ -88,21 +52,21 @@
           <img
             src={img}
             alt="랜덤하게 바뀌는 고양이 이미지"
-            width="400"  
+            width="400"
           /> <button onClick={handleHeartButton}>{heart}</button>
         </div>
       );
     };
 
-    const Favorites = ({ favorites }) => {      
+    const Favorites = ({ favorites }) => {
       const cid = _ => (parseInt(Math.random() * Number.MAX_SAFE_INTEGER + 1));
       if (favorites.length === 0) return (<div>하트를 눌러 고양이 이미지를 추가해 보세요.</div>)
 
       return (
         <ul className="favorites">
           {favorites.map(cat => (
-             <CatItem img={cat} key={cid()} />
-           ))}
+            <CatItem img={cat} key={cid()} />
+          ))}
         </ul>
       );
     };
@@ -149,7 +113,7 @@
             name="name"
             placeholder="영어 대사를 입력해주세요"
             onChange={handleInputChange}
-          /> <button type="submit">대사 입력</button> <button type="button" onClick={changeCat}>고양이 바꾸기</button>          
+          /> <button type="submit">대사 입력</button> <button type="button" onClick={changeCat}>고양이 바꾸기</button>
           <p style={{ color: "red" }}>{errorMessage}</p>
         </form>
 
@@ -167,36 +131,37 @@
       },
     };
 
-    const catUrl = (cat, message) => (`https://cataas.com/cat/${cat}/says/${message}`);  
+    const catUrl = (cat, message) => (`https://cataas.com/cat/${cat}/says/${message}`);
 
-    const App = () => {                       
-      const [counter, setCounter] = React.useState(COUNT);
+    const App = () => {
+
       const [mainCat, setMainCat] = React.useState(MAIN_CAT);
       const [message, setMessage] = React.useState(HELLO);
-      const [favorites, setFavorites] = React.useState(EMPTY);
 
-      React.useEffect(() => {        
-        console.log("Init App");
-        setCounter(jsonLocalStorage.getItem("counter") || COUNT);
-        setMainCat(jsonLocalStorage.getItem("mainCat") || MAIN_CAT);
-        setMessage(jsonLocalStorage.getItem("message") || HELLO);
-        setFavorites(jsonLocalStorage.getItem("favorites")|| EMPTY);        
-      }, []);
+      const [counter, setCounter] = React.useState(() => {
+        return jsonLocalStorage.getItem("counter") || COUNT;
+      });
+
+      const [favorites, setFavorites] = React.useState(() => {
+        return jsonLocalStorage.getItem("favorites") || EMPTY;
+      });
 
       const nextCat = async (text) => {
         const catId = await fetchCat();
         setMainCat(catId);
-        jsonLocalStorage.setItem("mainCat", catId);        
-      }
+      };
 
       const increaseCounter = () => {
-        setCounter(counter + 1);        
-        jsonLocalStorage.setItem("counter", counter);
-      }      
+        setCounter((prev) => {
+          const next = prev + 1;
+          jsonLocalStorage.setItem("counter", next);
+          return next;
+        });
+      };
 
       const addFarovirtes = () => {
         setFavorites([...favorites, catUrl(mainCat, message)]);
-        jsonLocalStorage.setItem("favorites", favorites);        
+        jsonLocalStorage.setItem("favorites", favorites);
 
       }
 
@@ -205,15 +170,11 @@
         jsonLocalStorage.setItem("message", msg);
       }
 
-      let title = "고양이 가라사대";
-      
-      if (counter !== 1) {
-        title = counter + "번째 고양이 가라사대";
-      }
+      let titleCount = counter === 1 ? null : counter + "번째";
 
       return (
         <div className='main-app'>
-          <Title>{title}</Title>
+          <Title>{titleCount} 고양이 가라사대</Title>
           <Form updateMessage={updateMessage} nextCat={nextCat} />
           <MainCard img={catUrl(mainCat, message)} addFarovirtes={addFarovirtes} increaseCounter={increaseCounter}
             mainCat={mainCat} favorites={favorites} />
